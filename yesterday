@@ -1,0 +1,51 @@
+from sqlalchemy import create_engine, Column, Integer, String, DateTime
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+from datetime import datetime, timedelta
+
+# Creating the SQLAlchemy engine
+engine = create_engine("sqlite:///sample_array.db", echo=True)
+
+# Creating a session class
+Session = sessionmaker(bind=engine)
+
+# Creating a base class for our declarative class
+Base = declarative_base()
+
+
+# Defining our SQLAlchemy model
+class SampleArray(Base):
+    __tablename__ = "sample_array"
+
+    id = Column(Integer, primary_key=True)
+    data = Column(Integer, nullable=False)
+    timestamp = Column(DateTime, default=datetime.now, nullable=False)
+
+
+# Function to show yesterday's data
+def show_yesterday_data():
+    # Calculate the datetime for yesterday
+    yesterday = datetime.now() - timedelta(days=1)
+
+    # Creating a session
+    with Session() as session:
+        # Querying the sample array data for yesterday
+        yesterday_data = (
+            session.query(SampleArray)
+            .filter(
+                SampleArray.timestamp >= yesterday.replace(hour=0, minute=0, second=0),
+                SampleArray.timestamp
+                < datetime.now().replace(hour=0, minute=0, second=0),
+            )
+            .all()
+        )
+
+        # Extracting the data from the query result
+        data_values = [sample.data for sample in yesterday_data]
+
+        print("Yesterday's Data:")
+        print(data_values)
+
+
+# Call the function to show yesterday's data
+show_yesterday_data()

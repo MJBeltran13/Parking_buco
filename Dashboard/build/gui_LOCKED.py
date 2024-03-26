@@ -2,12 +2,7 @@
 # https://github.com/ParthJadhav/Tkinter-Designer
 
 
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 from pathlib import Path
-
-# Import your Sample class from create_data.py
-from create_data import Sample
 
 # from tkinter import *
 # Explicit imports to satisfy Flake8
@@ -600,43 +595,22 @@ def delete_all_images():
         canvas.delete(image_item)
 
 
-# Function to fetch the latest sample_array from the database
-# Function to fetch the latest sample array from the database
-def get_latest_sample_array():
-    engine = create_engine("sqlite:///sample_database.db")
-    Session = sessionmaker(bind=engine)
-    session = Session()
+def update_canvas_text():
+    global sample_array
 
-    # Query for the latest record
-    latest_record = session.query(Sample).order_by(Sample.date_created.desc()).first()
+    canvas.itemconfig(ppm, text=str(sample_array[42]))  # Update ppm text
+    canvas.itemconfig(ave, text=str(sample_array[43]))  # Update ave text
+    canvas.itemconfig(condition, text=str(sample_array[44]))  # Update condition text
 
-    if latest_record:
-        # Convert JSON string back to Python list
-        sample_array = json.loads(latest_record.sample_array)
-        return sample_array
-    else:
-        return None
+    print("updated text")
+    update_image(sample_array)
+    print("updated parking")
+    window.after(5000, update_canvas_text)
 
-
-# Function to update the GUI with the latest data
-def update_gui_with_latest_data():
-    latest_sample_array = get_latest_sample_array()
-    if latest_sample_array:
-        # Update GUI elements based on the latest sample array
-        canvas.itemconfig(ppm, text=str(latest_sample_array[42]))  # Update ppm text
-        canvas.itemconfig(ave, text=str(latest_sample_array[43]))  # Update ave text
-        canvas.itemconfig(
-            condition, text=str(latest_sample_array[44])
-        )  # Update condition text
-        update_image(latest_sample_array)  # Update canvas images
-        window.after(5000, update_gui_with_latest_data)  # Schedule next update
-
-
-# Rest of your code...
 
 # Void Loop
 delete_all_images()
-update_gui_with_latest_data()
+update_canvas_text()
 # delete_all_images()
 
 

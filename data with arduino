@@ -1,0 +1,53 @@
+from sqlalchemy import create_engine, Column, Integer, String, DateTime
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+import json
+from datetime import datetime
+import serial
+
+# Establish serial connection with Arduino
+ser = serial.Serial('COM3', 9600)  # Adjust 'COM3' to match your Arduino's serial port
+
+# Create a SQLAlchemy engine
+engine = create_engine('sqlite:///sample_database.db', echo=True)  # Use 'echo=True' for logging
+
+# Create a base class for declarative class definitions
+Base = declarative_base()
+
+# Define your model
+class Sample(Base):
+    __tablename__ = 'samples'
+
+    id = Column(Integer, primary_key=True)
+    sample_array = Column(String)
+    date_created = Column(DateTime, default=datetime.now)
+
+# Create the database schema
+Base.metadata.create_all(engine)
+
+# Create a session to interact with the database
+Session = sessionmaker(bind=engine)
+session = Session()
+
+# Function to update the 16th number in the array and database
+def update_array(new_value):
+    sample = session.query(Sample).order_by(Sample.date_created.desc()).first()
+    if sample:
+        sample_array = json.loads(sample.sample_array)
+        sample_array[15] = new_value
+        sample.sample_array = json.dumps(sample_array)
+        session.commit()
+        print("Database updated successfully with new value:", new_value)
+    else:
+        print("No data found in the database.")
+
+# Main loop to listen for serial data from Arduino
+try:
+    while True:
+        if ser.in_waiting > 0:
+            serial_data = ser.readline().decode().strip()
+            new_value = int(serial_data)
+            update_array(new_value)
+except KeyboardInterrupt:
+    print("Exiting program.")
+    ser.close()

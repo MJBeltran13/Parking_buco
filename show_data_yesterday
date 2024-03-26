@@ -1,0 +1,49 @@
+from sqlalchemy import create_engine, Column, Integer, DateTime
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
+from datetime import datetime, timedelta
+
+# Creating the SQLAlchemy engine
+engine = create_engine("sqlite:///sample_array.db", echo=True)
+
+# Creating a session class
+Session = sessionmaker(bind=engine)
+
+# Creating a base class for our declarative class
+Base = declarative_base()
+
+
+# Defining our SQLAlchemy model
+class SampleArray(Base):
+    __tablename__ = "sample_array"
+
+    id = Column(Integer, primary_key=True)
+    data = Column(Integer, nullable=False)
+    timestamp = Column(DateTime, default=datetime.now, nullable=False)
+
+
+# Function to get the value saved yesterday at the 44th index
+def get_value_at_44th_index_saved_yesterday():
+    # Calculate the datetime for yesterday
+    yesterday = datetime.now() - timedelta(days=1)
+
+    # Creating a session
+    with Session() as session:
+        # Querying the sample array data saved yesterday
+        sample = (
+            session.query(SampleArray)
+            .filter(SampleArray.timestamp >= yesterday)
+            .order_by(SampleArray.timestamp.desc())
+            .first()
+        )
+
+        # Extracting the data value
+        if sample:
+            value = sample.data
+            print("Value saved yesterday:", value)
+        else:
+            print("No data saved yesterday.")
+
+
+# Call the function to get the value saved yesterday
+get_value_at_44th_index_saved_yesterday()

@@ -1,0 +1,40 @@
+from sqlalchemy import create_engine, Column, Integer, DateTime
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
+from datetime import datetime
+
+# Creating the SQLAlchemy engine
+engine = create_engine("sqlite:///sample_array.db", echo=True)
+
+# Creating a session class
+Session = sessionmaker(bind=engine)
+
+# Creating a base class for our declarative class
+Base = declarative_base()
+
+
+# Defining our SQLAlchemy model
+class SampleArray(Base):
+    __tablename__ = "sample_array"
+
+    id = Column(Integer, primary_key=True)
+    data = Column(Integer, nullable=False)
+    timestamp = Column(DateTime, default=datetime.now, nullable=False)
+
+
+# Function to show the array
+def show_array():
+    # Creating a session
+    with Session() as session:
+        # Querying the sample array data
+        sample_array_data = session.query(SampleArray).all()
+
+        # Extracting the data from the query result
+        array_values = [sample.data for sample in sample_array_data]
+
+        print("Sample Array:")
+        print(array_values)
+
+
+# Call the function to show the array
+show_array()

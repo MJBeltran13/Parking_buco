@@ -1,0 +1,89 @@
+from sqlalchemy import create_engine, Column, Integer, String
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+
+# Define the SQLAlchemy base class
+Base = declarative_base()
+
+
+# Define the SQLAlchemy model class
+class Sample(Base):
+    __tablename__ = "samples"
+
+    id = Column(Integer, primary_key=True)
+    value = Column(
+        Integer
+    )  # Assuming all elements in the array are integers except the last one
+
+
+# Create an SQLAlchemy engine
+engine = create_engine(
+    "sqlite:///sample.db", echo=True
+)  # Change this to your actual database URL
+
+# Create the database tables
+Base.metadata.create_all(engine)
+
+# Create a session object
+Session = sessionmaker(bind=engine)
+session = Session()
+
+# The sample array
+sample_array = [
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    1,
+    0,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    0,
+    1,
+    1,
+    1,
+    1,
+    23,
+    21,
+    "safe",
+]
+
+# Add elements of the array to the database
+for value in sample_array:
+    sample = Sample(value=value)
+    session.add(sample)
+
+# Commit the session to save the changes to the database
+session.commit()
+
+# Close the session
+session.close()

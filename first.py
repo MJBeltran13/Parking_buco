@@ -4,7 +4,7 @@ from sqlalchemy.orm import sessionmaker
 import json
 
 # Creating the database engine
-engine = create_engine('sqlite:///example.db', echo=True)
+engine = create_engine('sqlite:///spartan_dataset.db', echo=True)
 
 # Creating a base class for our models
 Base = declarative_base()

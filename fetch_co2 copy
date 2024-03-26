@@ -1,0 +1,37 @@
+from sqlalchemy import create_engine, Column, Integer, String, Float
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+
+# Creating the database engine
+engine = create_engine('sqlite:///example.db', echo=True)
+
+# Creating a base class for our models
+Base = declarative_base()
+
+# Define the model for CO2 sensor data
+class CO2SensorData(Base):
+    __tablename__ = 'co2_sensor_data'
+
+    id = Column(Integer, primary_key=True)
+    sensor_name = Column(String)
+    co2_level = Column(Float)
+
+# Creating a session
+Session = sessionmaker(bind=engine)
+session = Session()
+
+# Function to fetch the latest CO2 sensor data
+def get_latest_co2_sensor_data():
+    latest_data = session.query(CO2SensorData).order_by(CO2SensorData.id.desc()).first()
+    if latest_data:
+        return (latest_data.id, latest_data.sensor_name, latest_data.co2_level)
+    else:
+        return None
+
+# Fetching the latest CO2 sensor data
+latest_co2_sensor_data = get_latest_co2_sensor_data()
+if latest_co2_sensor_data:
+    id, sensor_name, co2_level = latest_co2_sensor_data
+    print(f"Latest CO2 Sensor Data - ID: {id}, Sensor Name: {sensor_name}, CO2 Level: {co2_level}")
+else:
+    print("No CO2 sensor data found.")

@@ -1,0 +1,37 @@
+from sqlalchemy import create_engine, Column, Integer, String, Float
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+import json
+
+# Creating the database engine
+engine = create_engine('sqlite:///example.db', echo=True)
+
+# Creating a base class for our models
+Base = declarative_base()
+
+# Define the model for saving arrays
+class ArrayData(Base):
+    __tablename__ = 'array_data'
+
+    id = Column(Integer, primary_key=True)
+    data = Column(String)  # Storing array as text
+
+# Creating a session
+Session = sessionmaker(bind=engine)
+session = Session()
+
+# Function to fetch the latest array data
+def get_latest_array_data():
+    latest_data = session.query(ArrayData).order_by(ArrayData.id.desc()).first()
+    if latest_data:
+        return (latest_data.id, json.loads(latest_data.data))
+    else:
+        return None
+
+# Fetching the latest array data
+latest_array_data = get_latest_array_data()
+if latest_array_data:
+    id, data = latest_array_data
+    print(f"Latest Array Data - ID: {id}, Data: {data}")
+else:
+    print("No array data found.")

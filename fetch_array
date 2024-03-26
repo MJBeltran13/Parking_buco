@@ -1,0 +1,35 @@
+from sqlalchemy import create_engine, Column, Integer, String, Float
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+import json
+
+# Creating the database engine
+engine = create_engine('sqlite:///example.db', echo=True)
+
+# Creating a base class for our models
+Base = declarative_base()
+
+# Define the model for saving arrays
+class ArrayData(Base):
+    __tablename__ = 'array_data'
+
+    id = Column(Integer, primary_key=True)
+    data = Column(String)  # Storing array as text
+
+# Creating tables
+Base.metadata.create_all(engine)
+
+# Creating a session
+Session = sessionmaker(bind=engine)
+session = Session()
+
+# Function to fetch all array data
+def get_all_array_data():
+    array_data = session.query(ArrayData).all()
+    return [(data.id, json.loads(data.data)) for data in array_data]
+
+# Fetching all array data
+array_data = get_all_array_data()
+print("\nArray Data:")
+for id, data in array_data:
+    print(f"ID: {id}, Data: {data}")

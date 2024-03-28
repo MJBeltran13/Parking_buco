@@ -1,0 +1,108 @@
+from sqlalchemy import create_engine, Column, Integer, String, DateTime
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+from datetime import datetime
+import json
+import time
+
+Base = declarative_base()
+
+class Sample(Base):
+    __tablename__ = 'samples'
+
+    id = Column(Integer, primary_key=True)
+    data = Column(String)
+    date_added = Column(DateTime, default=datetime.now)
+
+engine = create_engine('sqlite:///sample.db', echo=True)
+Base.metadata.create_all(engine)
+Session = sessionmaker(bind=engine)
+session = Session()
+
+prev_data_list_33 = 0
+
+def insert_data_into_db(data):
+    global prev_data_list_33
+    # Default array
+    default_array = [
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    1,
+    0,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    23,
+    21,
+    "safe",
+]
+
+
+    data_list = default_array[:]
+    data_list[18] = 1 #car1
+    data_list[19] = 1 #car2
+    data_list[33] = 1 #indicator for car 1 and 2
+    data_list[42] = 9 #co2 
+    data_list[43] = 3 #average 
+
+    data_list = default_array[:]
+    
+
+
+    # Additional logic to set the value of co2
+    if int(data_list[42]) > 10:
+        data_list[44] = "unsafe"
+    else:
+        data_list[44] = "safe" 
+
+    # If new data is provided, overwrite the corresponding values
+    if data:
+        data_list = data
+
+    sample = Sample(data=json.dumps(data_list))
+    session.add(sample)
+    session.commit()
+
+# Function to continuously insert data into the database every 10 seconds
+def insert_data_continuously():
+    while True:
+        insert_data_into_db([])  # You can provide new data here if needed
+        time.sleep(10)  # Wait for 10 seconds before the next insertion
+
+# Start the continuous insertion process
+insert_data_continuously()

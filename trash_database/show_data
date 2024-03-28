@@ -1,33 +1,40 @@
-from sqlalchemy import create_engine, Column, Integer, String
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import create_engine, Column, Integer, DateTime
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
+from datetime import datetime
 
-# Define the SQLAlchemy base class
+# Creating the SQLAlchemy engine
+engine = create_engine("sqlite:///sample_array.db", echo=True)
+
+# Creating a session class
+Session = sessionmaker(bind=engine)
+
+# Creating a base class for our declarative class
 Base = declarative_base()
 
-# Define the SQLAlchemy model class
-class Sample(Base):
-    __tablename__ = 'samples'
+
+# Defining our SQLAlchemy model
+class SampleArray(Base):
+    __tablename__ = "sample_array"
 
     id = Column(Integer, primary_key=True)
-    value = Column(Integer)  # Assuming all elements in the array are integers except the last one
+    data = Column(Integer, nullable=False)
+    timestamp = Column(DateTime, default=datetime.now, nullable=False)
 
-# Create an SQLAlchemy engine
-engine = create_engine('sqlite:///sample.db', echo=True)  # Change this to your actual database URL
 
-# Bind the engine to the Base class
-Base.metadata.bind = engine
+# Function to show the array
+def show_array():
+    # Creating a session
+    with Session() as session:
+        # Querying the sample array data
+        sample_array_data = session.query(SampleArray).all()
 
-# Create a session object
-Session = sessionmaker(bind=engine)
-session = Session()
+        # Extracting the data from the query result
+        array_values = [sample.data for sample in sample_array_data]
 
-# Query all rows from the database
-all_samples = session.query(Sample).all()
+        print("Sample Array:")
+        print(array_values)
 
-# Print all rows
-for sample in all_samples:
-    print(f"ID: {sample.id}, Value: {sample.value}")
 
-# Close the session
-session.close()
+# Call the function to show the array
+show_array()

@@ -1,0 +1,56 @@
+from sqlalchemy import create_engine, Column, Integer, String, DateTime
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+from datetime import datetime
+import json
+import serial
+import time
+
+Base = declarative_base()
+
+class Sample(Base):
+    __tablename__ = 'samples'
+
+    id = Column(Integer, primary_key=True)
+    data = Column(String)
+    date_added = Column(DateTime, default=datetime.now)
+
+# Create an engine and create all tables
+engine = create_engine('sqlite:///sample.db', echo=True)
+Base.metadata.create_all(engine)
+
+# Create a session
+Session = sessionmaker(bind=engine)
+session = Session()
+
+# Function to read data from Arduino
+def read_data_from_arduino():
+    ser = serial.Serial('/dev/ttyUSB0', 9600)  # Change '/dev/ttyUSB0' to match your Arduino's serial port
+    data = ser.readline().decode().strip()
+    ser.close()
+    return data
+
+# Function to insert data into the database
+def insert_data_into_db(data):
+    sample = Sample(data=json.dumps(data))
+    session.add(sample)
+    session.commit()
+
+try:
+    while True:
+        # Read data from Arduino
+        arduino_data = read_data_from_arduino()
+        
+        # Insert data into the database
+        insert_data_into_db(arduino_data)
+        
+        print("Data inserted into database:", arduino_data)
+
+        # Wait for 10 seconds
+        time.sleep(10)
+
+except KeyboardInterrupt:
+    print("Keyboard interrupt detected. Exiting.")
+
+# Close the session
+session.close()

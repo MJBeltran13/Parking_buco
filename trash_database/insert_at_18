@@ -1,0 +1,56 @@
+from sqlalchemy import create_engine, Column, Integer, String, DateTime
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+from datetime import datetime
+import json
+import time
+
+Base = declarative_base()
+
+class Sample(Base):
+    __tablename__ = 'samples'
+
+    id = Column(Integer, primary_key=True)
+    data = Column(String)
+    date_added = Column(DateTime, default=datetime.now)
+
+engine = create_engine('sqlite:///sample.db', echo=True)
+Base.metadata.create_all(engine)
+Session = sessionmaker(bind=engine)
+session = Session()
+
+def insert_data_into_db(data):
+    # Default array
+    default_array = [
+        1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        1, 1, 0, 1, 1, 1, 1, 1, 1, 1,
+        1, 1, 1, 1, 1, 1, 1, 1, 0, 1,
+        1, 1, 1, 1, 23, 21, "safe"
+    ]
+
+    # Replace values at indices 1, 2, and 3
+    data_list = default_array[:]
+    data_list[1] = 10  # Replace index 1 with 10
+    data_list[2] = 20  # Replace index 2 with 20
+    data_list[3] = 30  # Replace index 3 with 30
+
+    # Replace the value at index 18 with a new value
+    data_list[18] = '10'  # Replace index 18 with '10' (or any other value you want)
+    
+    # If new data is provided, overwrite the corresponding values
+    if data:
+        data_list = data
+
+    sample = Sample(data=json.dumps(data_list))
+    session.add(sample)
+    session.commit()
+
+# Function to continuously insert data into the database every 10 seconds
+def insert_data_continuously():
+    while True:
+        insert_data_into_db([])  # You can provide new data here if needed
+        time.sleep(10)  # Wait for 10 seconds before the next insertion
+
+# Start the continuous insertion process
+insert_data_continuously()

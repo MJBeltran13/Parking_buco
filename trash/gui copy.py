@@ -2,7 +2,12 @@
 # https://github.com/ParthJadhav/Tkinter-Designer
 
 
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 from pathlib import Path
+
+# Import your Sample class from create_data.py
+from create_data import Sample
 
 # from tkinter import *
 # Explicit imports to satisfy Flake8
@@ -93,24 +98,75 @@ image_18 = canvas.create_image(540.0, 272.0, image=image_image_18)
 image_image_19 = PhotoImage(file=relative_to_assets("image_19.png"))
 image_19 = canvas.create_image(540.0, 309.0, image=image_image_19)
 
-# image_image_20 = PhotoImage(
-#     file=relative_to_assets("image_20.png"))
-# image_20 = canvas.create_image(
-#     540.0,
-#     350.0,
-#     image=image_image_20
-# )
+image_image_20 = PhotoImage(file=relative_to_assets("image_20.png"))
+image_20 = canvas.create_image(540.0, 350.0, image=image_image_20)
 
-# image_image_21 = PhotoImage(
-#     file=relative_to_assets("image_21.png"))
-# image_21 = canvas.create_image(
-#     540.0,
-#     387.0,
-#     image=image_image_21
-# )
+image_image_21 = PhotoImage(file=relative_to_assets("image_21.png"))
+image_21 = canvas.create_image(540.0, 387.0, image=image_image_21)
 
 image_image_22 = PhotoImage(file=relative_to_assets("image_22.png"))
 image_22 = canvas.create_image(540.0, 428.0, image=image_image_22)
+
+
+image_image_23 = PhotoImage(file=relative_to_assets("image_23.png"))
+image_23 = canvas.create_image(582.0, 371.0, image=image_image_23)
+
+image_image_24 = PhotoImage(file=relative_to_assets("image_24.png"))
+image_24 = canvas.create_image(274.0, 410.0, image=image_image_24)
+
+image_image_25 = PhotoImage(file=relative_to_assets("image_25.png"))
+image_25 = canvas.create_image(274.0, 330.0, image=image_image_25)
+
+image_image_26 = PhotoImage(file=relative_to_assets("image_26.png"))
+image_26 = canvas.create_image(274.0, 252.0, image=image_image_26)
+
+image_image_27 = PhotoImage(file=relative_to_assets("image_27.png"))
+image_27 = canvas.create_image(274.0, 173.0, image=image_image_27)
+
+image_image_28 = PhotoImage(file=relative_to_assets("image_28.png"))
+image_28 = canvas.create_image(274.0, 94.0, image=image_image_28)
+
+image_image_29 = PhotoImage(file=relative_to_assets("image_29.png"))
+image_29 = canvas.create_image(274.0, 410.0, image=image_image_29)
+
+image_image_30 = PhotoImage(file=relative_to_assets("image_30.png"))
+image_30 = canvas.create_image(274.0, 330.0, image=image_image_30)
+
+image_image_31 = PhotoImage(file=relative_to_assets("image_31.png"))
+image_31 = canvas.create_image(274.0, 252.0, image=image_image_31)
+
+image_image_32 = PhotoImage(file=relative_to_assets("image_32.png"))
+image_32 = canvas.create_image(274.0, 173.0, image=image_image_32)
+
+image_image_33 = PhotoImage(file=relative_to_assets("image_33.png"))
+image_33 = canvas.create_image(274.0, 94.0, image=image_image_33)
+
+image_image_34 = PhotoImage(file=relative_to_assets("image_34.png"))
+image_34 = canvas.create_image(582.0, 212.0, image=image_image_34)
+
+image_image_35 = PhotoImage(file=relative_to_assets("image_35.png"))
+image_35 = canvas.create_image(582.0, 133.0, image=image_image_35)
+
+image_image_36 = PhotoImage(file=relative_to_assets("image_36.png"))
+image_36 = canvas.create_image(582.0, 54.0, image=image_image_36)
+
+image_image_37 = PhotoImage(file=relative_to_assets("image_37.png"))
+image_37 = canvas.create_image(582.0, 292.0, image=image_image_37)
+
+image_image_38 = PhotoImage(file=relative_to_assets("image_38.png"))
+image_38 = canvas.create_image(582.0, 371.0, image=image_image_38)
+
+image_image_39 = PhotoImage(file=relative_to_assets("image_39.png"))
+image_39 = canvas.create_image(582.0, 212.0, image=image_image_39)
+
+image_image_40 = PhotoImage(file=relative_to_assets("image_40.png"))
+image_40 = canvas.create_image(582.0, 133.0, image=image_image_40)
+
+image_image_41 = PhotoImage(file=relative_to_assets("image_41.png"))
+image_41 = canvas.create_image(582.0, 54.0, image=image_image_41)
+
+image_image_42 = PhotoImage(file=relative_to_assets("image_42.png"))
+image_42 = canvas.create_image(582.0, 292.0, image=image_image_42)
 
 ppm = canvas.create_text(
     712.0,
@@ -139,22 +195,450 @@ condition = canvas.create_text(
     font=("RobotoRoman Black", 24 * -1),
 )
 
-
 # All defs
-def update_canvas_text():
-    # Your logic to update canvas text goes here
-    # For example, you can update text based on some condition
-    # Here, I'm just updating the text to "23", "14", and "Safe" respectively
-    canvas.itemconfig(ppm, text="23")
-    canvas.itemconfig(ave, text="13")
-    canvas.itemconfig(condition, text="unsafe")
-    # Schedule the next update after 5 seconds
-    print("updating")
-    window.after(5000, update_canvas_text)
 
+
+def create_image(canvas_item, image_path, x, y):
+    """
+    Create an image on the canvas.
+
+    Args:
+        canvas_item: Canvas item to create the image on.
+        image_path: Path to the image file.
+        x: x-coordinate of the image.
+        y: y-coordinate of the image.
+    """
+    image = PhotoImage(file=image_path)
+    canvas_item = canvas.create_image(x, y, image=image)
+    return canvas_item, image
+
+
+def delete_image(canvas_item):
+    """
+    Delete an image from the canvas.
+
+    Args:
+        canvas_item: Canvas item to delete.
+    """
+    canvas.delete(canvas_item)
+
+
+def update_image(array):
+    """
+    Update canvas images based on the array.
+
+    Args:
+        array: Array indicating whether to display or hide each image.
+    """
+    global image_1, image_2, image_3, image_4, image_5, image_6, image_7, image_8, image_9, image_10, image_11, image_12, image_13, image_14, image_15, image_16, image_17, image_18, image_19, image_20, image_21, image_22, image_23, image_24, image_25, image_26, image_27, image_28, image_29, image_30, image_31, image_32, image_33, image_34, image_35, image_36, image_37, image_38, image_39, image_40, image_41, image_42  # Add other image variables here as needed
+
+    # Assuming array is defined somewhere above this code snippet
+    # Adjust the coordinates as per your requirement
+
+    # if array[0] == 1:
+    #     image_1 = create_image(canvas, relative_to_assets("image_1.png"), 431.0, 235.0)
+    # elif array[0] == 0:
+    #     delete_image(image_1)
+
+    if array[1] == 1:
+        image_2 = create_image(canvas, relative_to_assets("image_2.png"), 317.0, 73.0)
+    elif array[1] == 0:
+        delete_image(image_2)
+
+    if array[2] == 1:
+        image_3 = create_image(canvas, relative_to_assets("image_3.png"), 317.0, 114.0)
+    elif array[2] == 0:
+        delete_image(image_3)
+
+    if array[3] == 1:
+        image_4 = create_image(canvas, relative_to_assets("image_4.png"), 317.0, 155.0)
+    elif array[3] == 0:
+        delete_image(image_4)
+
+    if array[4] == 1:
+        image_5 = create_image(canvas, relative_to_assets("image_5.png"), 317.0, 192.0)
+    elif array[4] == 0:
+        delete_image(image_5)
+
+    if array[5] == 1:
+        image_6 = create_image(canvas, relative_to_assets("image_6.png"), 317.0, 230.0)
+    elif array[5] == 0:
+        delete_image(image_6)
+
+    if array[6] == 1:
+        image_7 = create_image(canvas, relative_to_assets("image_7.png"), 317.0, 271.0)
+    elif array[6] == 0:
+        delete_image(image_7)
+
+    if array[7] == 1:
+        image_8 = create_image(canvas, relative_to_assets("image_8.png"), 317.0, 312.0)
+    elif array[7] == 0:
+        delete_image(image_8)
+
+    if array[8] == 1:
+        image_9 = create_image(canvas, relative_to_assets("image_9.png"), 317.0, 349.0)
+    elif array[8] == 0:
+        delete_image(image_9)
+
+    if array[9] == 1:
+        image_10 = create_image(
+            canvas, relative_to_assets("image_10.png"), 317.0, 390.0
+        )
+    elif array[9] == 0:
+        delete_image(image_10)
+
+    if array[10] == 1:
+        image_11 = create_image(
+            canvas, relative_to_assets("image_11.png"), 317.0, 427.0
+        )
+    elif array[10] == 0:
+        delete_image(image_11)
+
+    if array[11] == 1:
+        image_12 = create_image(
+            canvas, relative_to_assets("image_12.png"), 540.0, 32.99999999999999
+        )
+    elif array[11] == 0:
+        delete_image(image_12)
+
+    if array[12] == 1:
+        image_13 = create_image(canvas, relative_to_assets("image_13.png"), 540.0, 74.0)
+    elif array[12] == 0:
+        delete_image(image_13)
+
+    if array[13] == 1:
+        image_14 = create_image(
+            canvas, relative_to_assets("image_14.png"), 540.0, 115.0
+        )
+    elif array[13] == 0:
+        delete_image(image_14)
+
+    if array[14] == 1:
+        image_15 = create_image(
+            canvas, relative_to_assets("image_15.png"), 540.0, 152.0
+        )
+    elif array[14] == 0:
+        delete_image(image_15)
+
+    if array[15] == 1:
+        image_16 = create_image(
+            canvas, relative_to_assets("image_16.png"), 540.0, 190.0
+        )
+    elif array[15] == 0:
+        delete_image(image_16)
+
+    if array[16] == 1:
+        image_17 = create_image(
+            canvas, relative_to_assets("image_17.png"), 540.0, 231.0
+        )
+    elif array[16] == 0:
+        delete_image(image_17)
+
+    if array[17] == 1:
+        image_18 = create_image(
+            canvas, relative_to_assets("image_18.png"), 540.0, 272.0
+        )
+    elif array[17] == 0:
+        delete_image(image_18)
+
+    if array[18] == 1:
+        image_19 = create_image(
+            canvas, relative_to_assets("image_19.png"), 540.0, 309.0
+        )
+    elif array[18] == 0:
+        delete_image(image_19)
+
+    if array[19] == 1:
+        image_20 = create_image(
+            canvas, relative_to_assets("image_20.png"), 540.0, 350.0
+        )
+    elif array[19] == 0:
+        delete_image(image_20)
+
+    if array[20] == 1:
+        image_21 = create_image(
+            canvas, relative_to_assets("image_21.png"), 540.0, 387.0
+        )
+    elif array[20] == 0:
+        delete_image(image_21)
+
+    if array[21] == 1:
+        image_22 = create_image(
+            canvas, relative_to_assets("image_22.png"), 540.0, 428.0
+        )
+    elif array[21] == 0:
+        delete_image(image_22)
+
+    if array[22] == 1:
+        image_23 = create_image(
+            canvas, relative_to_assets("image_23.png"), 582.0, 371.0
+        )
+    elif array[22] == 0:
+        delete_image(image_23)
+
+    if array[23] == 1:
+        image_24 = create_image(
+            canvas, relative_to_assets("image_24.png"), 274.0, 410.0
+        )
+    elif array[23] == 0:
+        delete_image(image_24)
+
+    if array[24] == 1:
+        image_25 = create_image(
+            canvas, relative_to_assets("image_25.png"), 274.0, 330.0
+        )
+    elif array[24] == 0:
+        delete_image(image_25)
+
+    if array[25] == 1:
+        image_26 = create_image(
+            canvas, relative_to_assets("image_26.png"), 274.0, 252.0
+        )
+    elif array[25] == 0:
+        delete_image(image_26)
+
+    if array[26] == 1:
+        image_27 = create_image(
+            canvas, relative_to_assets("image_27.png"), 274.0, 173.0
+        )
+    elif array[26] == 0:
+        delete_image(image_27)
+
+    if array[27] == 1:
+        image_28 = create_image(canvas, relative_to_assets("image_28.png"), 274.0, 94.0)
+    elif array[27] == 0:
+        delete_image(image_28)
+
+    if array[28] == 1:
+        image_29 = create_image(
+            canvas, relative_to_assets("image_29.png"), 274.0, 410.0
+        )
+    elif array[28] == 0:
+        delete_image(image_29)
+
+    if array[29] == 1:
+        image_30 = create_image(
+            canvas, relative_to_assets("image_30.png"), 274.0, 330.0
+        )
+    elif array[29] == 0:
+        delete_image(image_30)
+
+    if array[30] == 1:
+        image_31 = create_image(
+            canvas, relative_to_assets("image_31.png"), 274.0, 252.0
+        )
+    elif array[30] == 0:
+        delete_image(image_31)
+
+    if array[31] == 1:
+        image_32 = create_image(
+            canvas, relative_to_assets("image_32.png"), 274.0, 173.0
+        )
+    elif array[31] == 0:
+        delete_image(image_32)
+
+    if array[32] == 1:
+        image_33 = create_image(canvas, relative_to_assets("image_33.png"), 274.0, 94.0)
+    elif array[32] == 0:
+        delete_image(image_33)
+
+    if array[33] == 1:
+        image_34 = create_image(
+            canvas, relative_to_assets("image_34.png"), 582.0, 212.0
+        )
+    elif array[33] == 0:
+        delete_image(image_34)
+
+    if array[34] == 1:
+        image_35 = create_image(
+            canvas, relative_to_assets("image_35.png"), 582.0, 133.0
+        )
+    elif array[34] == 0:
+        delete_image(image_35)
+
+    if array[35] == 1:
+        image_36 = create_image(canvas, relative_to_assets("image_36.png"), 582.0, 54.0)
+    elif array[35] == 0:
+        delete_image(image_36)
+
+    if array[36] == 1:
+        image_37 = create_image(
+            canvas, relative_to_assets("image_37.png"), 582.0, 292.0
+        )
+    elif array[36] == 0:
+        delete_image(image_37)
+
+    if array[37] == 1:
+        image_38 = create_image(
+            canvas, relative_to_assets("image_38.png"), 582.0, 371.0
+        )
+    elif array[37] == 0:
+        delete_image(image_38)
+
+    if array[38] == 1:
+        image_39 = create_image(
+            canvas, relative_to_assets("image_39.png"), 582.0, 212.0
+        )
+
+    elif array[38] == 0:
+        delete_image(image_39)
+
+    if array[39] == 1:
+        image_40 = create_image(
+            canvas, relative_to_assets("image_40.png"), 582.0, 133.0
+        )
+
+    elif array[39] == 0:
+        delete_image(image_40)
+
+    if array[40] == 1:
+        image_41 = create_image(canvas, relative_to_assets("image_41.png"), 582.0, 54.0)
+    elif array[40] == 0:
+        delete_image(image_41)
+
+    if array[41] == 1:
+        image_42 = create_image(
+            canvas, relative_to_assets("image_42.png"), 582.0, 292.0
+        )
+    elif array[41] == 0:
+        delete_image(image_42)
+
+
+sample_array = [
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    1,
+    0,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    0,
+    1,
+    1,
+    1,
+    1,
+    23,
+    21,
+    "safe",
+]
+
+
+def delete_all_images():
+    for image_item in [
+        image_2,
+        image_3,
+        image_4,
+        image_5,
+        image_6,
+        image_7,
+        image_8,
+        image_9,
+        image_10,
+        image_11,
+        image_12,
+        image_13,
+        image_14,
+        image_15,
+        image_16,
+        image_17,
+        image_18,
+        image_19,
+        image_20,
+        image_21,
+        image_22,
+        image_23,
+        image_24,
+        image_25,
+        image_26,
+        image_27,
+        image_28,
+        image_29,
+        image_30,
+        image_31,
+        image_32,
+        image_33,
+        image_34,
+        image_35,
+        image_36,
+        image_37,
+        image_38,
+        image_39,
+        image_40,
+        image_41,
+        image_42,
+    ]:
+        canvas.delete(image_item)
+
+
+# Function to fetch the latest sample_array from the database
+# Function to fetch the latest sample array from the database
+def get_latest_sample_array():
+    engine = create_engine("sqlite:///sample_database.db")
+    Session = sessionmaker(bind=engine)
+    session = Session()
+
+    # Query for the latest record
+    latest_record = session.query(Sample).order_by(Sample.date_created.desc()).first()
+
+    if latest_record:
+        # Convert JSON string back to Python list
+        sample_array = json.loads(latest_record.sample_array)
+        return sample_array
+    else:
+        return None
+
+
+# Function to update the GUI with the latest data
+def update_gui_with_latest_data():
+    latest_sample_array = get_latest_sample_array()
+    if latest_sample_array:
+        # Update GUI elements based on the latest sample array
+        canvas.itemconfig(ppm, text=str(latest_sample_array[42]))  # Update ppm text
+        canvas.itemconfig(ave, text=str(latest_sample_array[43]))  # Update ave text
+        canvas.itemconfig(
+            condition, text=str(latest_sample_array[44])
+        )  # Update condition text
+        update_image(latest_sample_array)  # Update canvas images
+        window.after(5000, update_gui_with_latest_data)  # Schedule next update
+
+
+# Rest of your code...
 
 # Void Loop
-update_canvas_text()
+delete_all_images()
+update_gui_with_latest_data()
+# delete_all_images()
+
 
 window.resizable(False, False)
 window.mainloop()

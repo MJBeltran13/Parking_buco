@@ -1,36 +1,53 @@
 #include <ESP8266WiFi.h>
 #include <espnow.h>
 
-// Structure to store the message
-typedef struct __attribute__((packed)) {
-  char text[32];
-} message_t;
+// Structure example to receive data
+// Must match the sender structure
+typedef struct struct_message {
+  bool a;
+  bool b;
+  int c;
+  bool d;
+} struct_message;
 
-// Callback function to receive data
-void onDataReceived(const uint8_t *mac_addr, const uint8_t *data, int len) {
-  Serial.print("Received data from: ");
-  Serial.write(mac_addr, 6);
-  Serial.print(", Data: ");
-  Serial.write(data, len);
+// Create a struct_message called myData
+struct_message myData;
+
+// Callback function that will be executed when data is received
+void OnDataRecv(uint8_t *mac, uint8_t *incomingData, uint8_t len) {
+  memcpy(&myData, incomingData, sizeof(myData));
+  Serial.print("Bytes received: ");
+  Serial.println(len);
+  Serial.print("Bool a: ");
+  Serial.println(myData.a);
+  Serial.print("Bool b: ");
+  Serial.println(myData.b);
+  Serial.print("Int c: ");
+  Serial.println(myData.c);
+  Serial.print("Bool d: ");
+  Serial.println(myData.d);
   Serial.println();
 }
 
 void setup() {
+  // Initialize Serial Monitor
   Serial.begin(115200);
 
-  // Set the ESP8266 to Station mode (client)
+  // Set device as a Wi-Fi Station
   WiFi.mode(WIFI_STA);
 
-  // Initialize ESP-NOW
+  // Init ESP-NOW
   if (esp_now_init() != 0) {
-    Serial.println("ESP-NOW initialization failed");
+    Serial.println("Error initializing ESP-NOW");
     return;
   }
 
-  // Register callback function for receiving data
-  esp_now_register_recv_cb(onDataReceived);
+  // Once ESPNow is successfully Init, we will register for recv CB to
+  // get recv packer info
+  esp_now_set_self_role(ESP_NOW_ROLE_SLAVE);
+  esp_now_register_recv_cb(OnDataRecv);
 }
 
 void loop() {
-  // Do nothing in the loop, all receiving is handled in onDataReceived
+  // Nothing to do in the loop
 }

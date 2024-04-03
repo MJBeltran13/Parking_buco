@@ -1,0 +1,61 @@
+from sqlalchemy import create_engine, Column, Integer, String, DateTime
+from sqlalchemy.orm import sessionmaker, declarative_base
+from datetime import datetime
+import json
+import time
+import serial
+
+Base = declarative_base()
+
+class Sample(Base):
+    __tablename__ = 'samples'
+
+    id = Column(Integer, primary_key=True)
+    data = Column(String)
+    date_added = Column(DateTime, default=datetime.now)
+
+engine = create_engine('sqlite:///sample.db', echo=False)  # Set echo to False
+Base.metadata.create_all(engine)
+Session = sessionmaker(bind=engine)
+session = Session()
+
+# Function to read data from Arduino via serial communication
+def read_data_from_arduino():
+    ser = serial.Serial('COM6', 115200)  # Adjust port and baud rate
+    while True:
+        line = ser.readline().decode().strip()
+        if line:
+            return line
+        
+def insert_data_continuously():
+    while True:
+        data = read_data_from_arduino()
+        values = data.split()
+        if len(values) == 4:
+            car1 = int(values[0])
+            car2 = int(values[1])
+            co2 = int(values[2])
+            indicator = int(values[3])
+            insert_data_into_db(car1, car2, co2, indicator)
+        time.sleep(1)
+
+
+def insert_data_into_db(car1, car2, co2, indicator):
+    default_array = [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 9, 3, "safe"]
+
+    default_array[19] = car1
+    default_array[20] = car2
+    default_array[37] = indicator
+    default_array[42] = co2
+    default_array[43] = 32
+    default_array[44] = "unsafe" if co2 > 10 else "safe"
+
+    sample = Sample(data=json.dumps(default_array))
+    session.add(sample)
+    session.commit()
+
+# Function to continuously insert data into the database every 10 seconds
+
+
+# Start the continuous insertion process
+insert_data_continuously()

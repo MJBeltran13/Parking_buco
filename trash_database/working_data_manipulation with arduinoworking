@@ -1,0 +1,65 @@
+from sqlalchemy import create_engine, Column, Integer, String, DateTime
+from sqlalchemy.orm import sessionmaker, declarative_base
+from datetime import datetime
+import json
+import serial
+import time
+
+Base = declarative_base()
+
+class Sample(Base):
+    __tablename__ = 'samples'
+
+    id = Column(Integer, primary_key=True)
+    data = Column(String)
+    date_added = Column(DateTime, default=datetime.now)
+
+engine = create_engine('sqlite:///sample.db', echo=False)  # Set echo to False
+Base.metadata.create_all(engine)
+Session = sessionmaker(bind=engine)
+session = Session()
+
+def read_sensor_values(ser):
+    sensor_values = {}
+    line = ser.readline().decode().strip()  # Read a line from serial and decode
+    print("Received:", line)  # Print received line for debugging
+    pairs = line.split(",")  # Split the line into key-value pairs
+    for pair in pairs:
+        key, value = pair.split(":")  # Split each pair into key and value
+        sensor_values[key.strip()] = value.strip()  # Remove leading/trailing whitespace
+    return sensor_values
+
+def insert_data_into_db(ser):
+    default_array = [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 9, 3, "safe"]
+    data = read_sensor_values(ser)
+    print("Data from serial:", data)  # Debugging output
+    car_1_value = int(data.get('a', 'Not Found'))
+    car_2_value = int(data.get('b', 'Not Found'))
+    co2_value = int(data.get('c', '0'))  # Convert to integer
+    indicator_value = int(data.get('d', 'Not Found'))
+    default_array[19] = car_1_value
+    default_array[20] = car_2_value
+    default_array[37] = indicator_value 
+    default_array[42] = co2_value
+    default_array[43] = 32
+    default_array[44] = "unsafe" if co2_value > 10 else "safe"
+
+    sample = Sample(data=json.dumps(default_array))
+    session.add(sample)
+    session.commit()
+    print("Data inserted into database.")  # Debugging output
+
+
+def insert_data_continuously():
+    ser = serial.Serial('COM8', 9600)  # Open the serial port
+    try:
+        while True:
+            insert_data_into_db(ser)
+            time.sleep(1)
+    except Exception as e:
+        print("An error occurred:", e)
+    finally:
+        ser.close()  # Close the serial port
+
+# Start the continuous insertion process
+insert_data_continuously()

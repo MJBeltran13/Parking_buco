@@ -4,10 +4,10 @@
 // Structure example to receive data
 // Must match the sender structure
 typedef struct struct_message {
-  bool a;
-  bool b;
+  int a;
+  int b;
   int c;
-  bool d;
+  int d;
 } struct_message;
 
 // Create a struct_message called myData
@@ -16,22 +16,21 @@ struct_message myData;
 // Callback function that will be executed when data is received
 void OnDataRecv(uint8_t *mac, uint8_t *incomingData, uint8_t len) {
   memcpy(&myData, incomingData, sizeof(myData));
-  Serial.print("Bytes received: ");
-  Serial.println(len);
-  Serial.print("Bool a: ");
-  Serial.println(myData.a);
-  Serial.print("Bool b: ");
-  Serial.println(myData.b);
-  Serial.print("Int c: ");
-  Serial.println(myData.c);
-  Serial.print("Bool d: ");
-  Serial.println(myData.d);
+//  Serial.print("Bytes received: ");
+//  Serial.println(len);
+  Serial.print(myData.a);
+  Serial.print(",");
+  Serial.print(myData.b);
+  Serial.print(",");
+  Serial.print(myData.c);
+  Serial.print(",");
+  Serial.print(myData.d);
   Serial.println();
 }
 
 void setup() {
   // Initialize Serial Monitor
-  Serial.begin(115200);
+  Serial.begin(9600);
 
   // Set device as a Wi-Fi Station
   WiFi.mode(WIFI_STA);

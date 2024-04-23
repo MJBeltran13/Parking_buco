@@ -7,14 +7,16 @@ import time
 
 Base = declarative_base()
 
+
 class Sample(Base):
-    __tablename__ = 'samples'
+    __tablename__ = "samples"
 
     id = Column(Integer, primary_key=True)
     data = Column(String)
     date_added = Column(DateTime, default=datetime.now)
 
-engine = create_engine('sqlite:///sample.db', echo=True)
+
+engine = create_engine("sqlite:///sample.db", echo=True)
 Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)
 session = Session()
@@ -30,8 +32,10 @@ ASSETS_PATH = OUTPUT_PATH / Path(
     r"C:\Users\ADMIN\Documents\GitHub\Parking_buco\Dashboard\build\assets\frame0"
 )
 
+
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
+
 
 window = Tk()
 window.geometry("862x471")
@@ -182,16 +186,16 @@ image_Ground = PhotoImage(file=relative_to_assets("Ground.png"))
 image_Ground1 = PhotoImage(file=relative_to_assets("Ground.png"))
 
 ppm = canvas.create_text(
-    712.0,
-    193.0,
-    anchor="nw",
+    723.0,
+    200.0,
+    anchor="center",
     text="Initial Text 1",
     fill="#FCFCFC",
     font=("RobotoRoman Black", 24 * -1),
 )
 
 ave = canvas.create_text(
-    712.0,
+    655.0,
     352.0,
     anchor="nw",
     text="Initial Text 2",
@@ -210,10 +214,12 @@ condition = canvas.create_text(
 
 # All defs
 
+
 def create_image(canvas_item, image_path, x, y):
     image = PhotoImage(file=image_path)
     canvas_item = canvas.create_image(x, y, image=image)
     return canvas_item, image
+
 
 def delete_image(canvas_item):
     try:
@@ -229,9 +235,11 @@ def fetch_latest_data():
         return data
     else:
         return None
-    
-image_21 = None 
+
+
+image_21 = None
 image_20 = None
+
 
 def update_image(array):
     """
@@ -356,8 +364,10 @@ def update_image(array):
         delete_image(image_19)
 
     if array[19] == 1:
-        image_20 = create_image(canvas, relative_to_assets("image_20.png"), 540.0, 350.0)
-        
+        image_20 = create_image(
+            canvas, relative_to_assets("image_20.png"), 540.0, 350.0
+        )
+
     elif array[19] == 0:
         print("car1 is deleted")
         # delete_image(image_20)
@@ -365,7 +375,9 @@ def update_image(array):
         Ground = create_image(canvas, relative_to_assets("Ground.png"), 539.0, 350.0)
 
     if array[20] == 1:
-        image_21 = create_image(canvas, relative_to_assets("image_21.png"), 540.0, 390.0)  # car2
+        image_21 = create_image(
+            canvas, relative_to_assets("image_21.png"), 540.0, 390.0
+        )  # car2
         # car2
     elif array[20] == 0:
         print("car2 is deleted")
@@ -514,6 +526,7 @@ def update_image(array):
     elif array[41] == 0:
         delete_image(image_42)
 
+
 def update_canvas_text():
     global sample_array
     sample_array = fetch_latest_data()
@@ -528,8 +541,6 @@ def update_canvas_text():
     print(sample_array[20])
     print("updated parking")
     window.after(5000, update_canvas_text)
-
-
 
 
 # Void Loop

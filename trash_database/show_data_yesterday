@@ -4,7 +4,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime, timedelta
 
 # Creating the SQLAlchemy engine
-engine = create_engine("sqlite:///sample_array.db", echo=True)
+engine = create_engine("sqlite:///sample.db", echo=True)
 
 # Creating a session class
 Session = sessionmaker(bind=engine)
@@ -15,7 +15,7 @@ Base = declarative_base()
 
 # Defining our SQLAlchemy model
 class SampleArray(Base):
-    __tablename__ = "sample_array"
+    __tablename__ = "samples"
 
     id = Column(Integer, primary_key=True)
     data = Column(Integer, nullable=False)

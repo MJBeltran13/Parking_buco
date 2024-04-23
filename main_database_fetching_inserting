@@ -1,0 +1,143 @@
+from sqlalchemy import create_engine, Column, Integer, String, DateTime
+from sqlalchemy.orm import sessionmaker, declarative_base
+from datetime import datetime
+import json
+import serial
+import time
+
+from get_ave import get_values_at_42nd_index_for_yesterday, calculate_average
+
+# from get_ave import *
+
+Base = declarative_base()
+
+
+class Sample(Base):
+    __tablename__ = "samples"
+
+    id = Column(Integer, primary_key=True)
+    data = Column(String)
+    date_added = Column(DateTime, default=datetime.now)
+
+
+engine = create_engine("sqlite:///sample.db", echo=False)  # Set echo to False
+Base.metadata.create_all(engine)
+Session = sessionmaker(bind=engine)
+session = Session()
+
+
+def read_sensor_values(ser):
+    sensor_values = {}
+    line = ser.readline().decode().strip()  # Read a line from serial and decode
+    print("Received:", line)  # Print received line for debugging
+
+    # Split the line into values
+    values = line.split(",")
+
+    # Check if enough values are received
+    if len(values) < 4:
+        print("Error: Not enough values received")
+        return sensor_values
+
+    # Assign values to keys 'a', 'b', 'c', and 'd'
+    sensor_values["a"] = int(values[0].strip())
+    sensor_values["b"] = int(values[1].strip())
+    sensor_values["c"] = int(values[2].strip())
+    sensor_values["d"] = int(values[3].strip())
+
+    return sensor_values
+
+
+def insert_data_into_db(ser):
+    # Define default array
+    default_array = [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        9,
+        3,
+        "safe",
+    ]
+
+    # Read sensor values
+    data = read_sensor_values(ser)
+    print("Data from serial:", data)  # Debugging output
+
+    values = get_values_at_42nd_index_for_yesterday()
+    average_value = calculate_average(values)
+
+    # Update default array with sensor values
+    default_array[19] = data.get("a", 0)
+    default_array[20] = data.get("b", 0)
+    default_array[37] = data.get("d", 0)
+    default_array[42] = data.get("c", 0)
+
+    # default_array[43] = average_value
+    if average_value is not None:
+        default_array[43] = int(average_value)
+    else:
+        default_array[43] = "No Values Yesterday"
+
+    default_array[44] = "unsafe" if data.get("c", 0) > 10 else "safe"
+
+    # Create Sample object and add to session
+    sample = Sample(data=json.dumps(default_array))
+    session.add(sample)
+    session.commit()
+
+    print("Data inserted into database.")  # Debugging output
+
+
+def insert_data_continuously():
+    ser = serial.Serial("COM8", 9600)  # Open the serial port
+    try:
+        while True:
+            insert_data_into_db(ser)
+            time.sleep(1)
+    except Exception as e:
+        print("An error occurred:", e)
+    finally:
+        ser.close()  # Close the serial port
+
+
+# Start the continuous insertion process
+insert_data_continuously()

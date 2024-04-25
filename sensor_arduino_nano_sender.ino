@@ -77,16 +77,16 @@ void proximity() {
   //    Serial.print(sonar[1].ping_cm());
   //    Serial.println("cm");
   Serial.print("Sensor 0: ");
-  if (distance_sensor_0 < 50) {
+  // if (distance_sensor_0 < 50) {
 
-    Serial.println("1"); // Print '1' if distance is below 50cm
-  } else {
-    Serial.println("0"); // Print '0' otherwise
-  }
+  //   Serial.println("1"); // Print '1' if distance is below 50cm
+  // } else {
+  //   Serial.println("0"); // Print '0' otherwise
+  // }
   Serial.print("Sensor 1: ");
-  if (distance_sensor_1 < 50) {
-    Serial.println("1"); // Print '1' if distance is below 50cm
-  } else {
-    Serial.println("0"); // Print '0' otherwise
-  }
+//   if (distance_sensor_1 < 50) {
+//     Serial.println("1"); // Print '1' if distance is below 50cm
+//   } else {
+//     Serial.println("0"); // Print '0' otherwise
+//   }
 }

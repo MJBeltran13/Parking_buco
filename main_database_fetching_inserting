@@ -128,7 +128,7 @@ def insert_data_into_db(ser):
 
 
 def insert_data_continuously():
-    ser = serial.Serial("COM8", 9600)  # Open the serial port
+    ser = serial.Serial("COM6", 9600)  # Open the serial port
     try:
         while True:
             insert_data_into_db(ser)

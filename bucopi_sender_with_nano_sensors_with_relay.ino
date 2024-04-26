@@ -48,11 +48,24 @@ void setup() {
 }
 
 void loop() {
+  start();
+}
+
+void start() {
   // Perform tasks for 8 hours (28800 seconds)
   unsigned long startTime = millis();
   unsigned long duration = 8 * 60 * 60 * 1000; // 8 hours in milliseconds
 
   while (millis() - startTime < duration) {
+    // Calculate remaining time
+    unsigned long elapsedTime = millis() - startTime;
+    unsigned long remainingTime = duration - elapsedTime;
+
+    // Display remaining time
+    Serial.print("Time remaining: ");
+    Serial.print(remainingTime / 1000); // Convert milliseconds to seconds
+    Serial.println(" seconds");
+
     // Perform tasks
     digitalWrite(relayPin, LOW);
     delay(1000); // Wait for 1 second
@@ -68,6 +81,7 @@ void loop() {
 
   // Code below this line will not be executed
 }
+
 
 void performTasks() {
   read_sensor();

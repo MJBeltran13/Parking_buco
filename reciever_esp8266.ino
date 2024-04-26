@@ -1,6 +1,8 @@
 #include <ESP8266WiFi.h>
 #include <espnow.h>
 
+const int relayPin = 7;
+
 // Structure example to receive data
 // Must match the sender structure
 typedef struct struct_message {
